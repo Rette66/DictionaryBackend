@@ -105,8 +105,9 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
     "moduleResolution": "Node16",
-    "outDir": "build"
+    "outDir": "build",
+    "types": ["jest"]
   },
   "exclude":["node_modules/"],
-  "include":["src/**/*.ts"]
+  "include":["src/**/*.ts", "test/**/*.ts"]
 }
