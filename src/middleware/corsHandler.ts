@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { json } from "stream/consumers";
 
 export function corsHandler(req: Request, res: Response, next: NextFunction){
     res.header("Access-Control-Allow-Origin", req.header("origin"))
