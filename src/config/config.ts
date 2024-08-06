@@ -19,10 +19,11 @@ export const mongo = {
     MONGO_PASSWORD,
     MONGO_URL,
     MONGO_DATABASE,
-    MONGO_OPTIONS
+    MONGO_OPTIONS,
+    MONGO_CONNECTION: 'mongodb+srv://columbusk:columbusk@cluster0.g8i2ghp.mongodb.net/?retryWrites=true&w=majority' 
 }
 
-export const SERVER ={
+export const server ={
     SERVER_HOSTNAME,
     SERVER_PORT
 };

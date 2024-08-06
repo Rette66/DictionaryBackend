@@ -2,50 +2,68 @@ import http from 'http'
 import express from 'express' 
 import './config/logging' 
 import 'reflect-metadata'
+import mongoose from 'mongoose'
 
 import { loggingHandler } from './middleware/loggingHandler';
 import { corsHandler } from './middleware/corsHandler';
 import { routeNotFound } from './middleware/routNotFound';
-import { SERVER, SERVER_HOSTNAME, SERVER_PORT } from './config/config';
+import { mongo, server } from './config/config';
 import { defineRoutes } from './modules/routes';
-import MainController from './controller/main';
-import { availableParallelism } from 'os';
+import MainController from './controller/maincontroller';
+import { declareHandler } from './middleware/declareHandler'
+import BooksController from './controller/booksController'
 
 export const application = express();
 export let httpServer: ReturnType<typeof http.createServer>
 
-export const Main=()=>{
-    logging.info('--------------------------');
-    logging.info('Initializing API')
-    logging.info('--------------------------')
+export const Main  = async() => {
+    logging.log('--------------------------');
+    logging.log('Initializing API')
+    logging.log('--------------------------')
     application.use(express.urlencoded({ extended: true}));
     application.use(express.json()); 
 
-    logging.info('--------------------------')
-    logging.info('Logging & Configuration')
-    logging.info('--------------------------')
+    logging.log('--------------------------');
+    logging.log('Connect to Mongo')
+    logging.log('--------------------------')
+    try{
+        const connection = await mongoose.connect(mongo.MONGO_CONNECTION, mongo.MONGO_OPTIONS)
+        logging.log('--------------------------');
+        logging.log('Connected to Mongo: ' , connection.version)
+        logging.log('--------------------------')
+    } catch (error) {
+        logging.log('--------------------------');
+        logging.log('Unable to Connect to Mongo')
+        logging.error(error)
+        logging.log('--------------------------')
+    }
+
+    logging.log('--------------------------')
+    logging.log('Logging & Configuration')
+    logging.log('--------------------------')
+    application.use(declareHandler)
     application.use(loggingHandler)
     application.use(corsHandler)
 
-    logging.info('--------------------------')
-    logging.info('Define Controller Routing')
-    logging.info('--------------------------')
-    defineRoutes([MainController], application)
+    logging.log('--------------------------')
+    logging.log('Define Controller Routing')
+    logging.log('--------------------------')
+    defineRoutes([MainController, BooksController], application)
 
-    logging.info('--------------------------')
-    logging.info('Define Controller Routing')
-    logging.info('--------------------------')
+    logging.log('--------------------------')
+    logging.log('Define Controller Routing')
+    logging.log('--------------------------')
     application.use(routeNotFound)
 
 
-    logging.info('--------------------------')
-    logging.info('Start Server')
-    logging.info('--------------------------')
+    logging.log('--------------------------')
+    logging.log('Start Server')
+    logging.log('--------------------------')
     httpServer = http.createServer(application)
-    httpServer.listen(SERVER.SERVER_PORT, () => {
-        logging.info('--------------------------')
-        logging.info('Server Started: ' +  SERVER_HOSTNAME + ':' + SERVER_PORT)
-        logging.info('--------------------------')
+    httpServer.listen(server.SERVER_PORT, () => {
+        logging.log('--------------------------')
+        logging.log('Server Started: ' +  server.SERVER_HOSTNAME + ':' + server.SERVER_PORT)
+        logging.log('--------------------------')
     
     })
 };
